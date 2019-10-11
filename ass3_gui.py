@@ -23,14 +23,14 @@ class Box(QWidget):
 
         super().__init__()
 
-        #self.resize(30, 30)
-        self.setText("1")
+    """
+        self.resize(30, 30)
+
         self.setStyleSheet("background-color: black")
         self.initialize()
         self.clicked.connect(self.clickedby_human)
 
     def initialize(self):
-        """Contains the state of the button"""
 
         print("Initializing Button")
         self.is_clicked = False
@@ -59,10 +59,17 @@ class Box(QWidget):
             self.setEnabled = False
             self.update()
 
+    """
+
     def paintEvent(self, event):
 
         pane = QPainter(self)
         pane.setRenderHint(QPainter.Antialiasing)
+
+        width = 90
+        for i in range(4):
+            pane.drawRect(0, i * width, width, width)
+        """
 
         if self.is_clickedby_human:
             self.setStyleSheet("background-color: blue")
@@ -70,6 +77,7 @@ class Box(QWidget):
             self.setStyleSheet("background-color: red")
         else:
             self.setStyleSheet("background-color: black")
+        """
 
 
 
@@ -80,28 +88,22 @@ class Game(QMainWindow):
 
         self.setWindowTitle(f"AI Game")
         window = QWidget()
-        layout = QHBoxLayout()
+        #layout = QHBoxLayout()
         #self.setCentralWidget(window)
 
-        self.grid = QGridLayout()
-        self.grid.setSpacing(5)
-        layout.addLayout(self.grid)
-        window.setLayout(layout)
+        self.layout = QHBoxLayout()
+        for r in range(4):
+            box = Box()
+            self.layout.addWidget(box)
+
+
+        window.setLayout(self.layout)
         self.setCentralWidget(window)
-
-        self.init_map()
-
 
         self.show()
 
-    def init_map(self):
-        """Adds boxes on GUI"""
 
-        for r in range(4):
-            for c in range(4):
-                box = Box()
-                self.grid.addWidget(box, r, c)
-                print(r, c)
+
 
 
 app = QApplication(sys.argv)
