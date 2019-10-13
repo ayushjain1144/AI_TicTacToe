@@ -11,55 +11,62 @@ from PyQt5.QtCore import *
 import random
 import sys
 import time
+import turn
 
 ################ ERROR HERE ###########################
+
+
 class Box(QWidget):
 
     is_clicked = pyqtSignal()
     is_clickedby_human = pyqtSignal()
     is_clickedby_AI = pyqtSignal()
 
+    # -1 for not clickedby_human
+    # 0 for clicked by human
+    # 1 for clicked by AI
+
+
     def __init__(self):
 
         super().__init__()
 
-    """
-        self.resize(30, 30)
+        #self.setStyleSheet("background-color: black")
+        #self.initialize()
+        self.topmost_filled = -1
+        self.record_clicked = [-1, -1, -1, -1]
+        self.color_list = ["grey", "green", "red"]
+        self.mouseReleaseEvent = self.clickedby_human
 
-        self.setStyleSheet("background-color: black")
-        self.initialize()
-        self.clicked.connect(self.clickedby_human)
+    def clickedby_human(self, event):
 
-    def initialize(self):
+        if turn.val == 0:
 
-        print("Initializing Button")
-        self.is_clicked = False
-        self.is_clickedby_AI = False
-        self.is_clickedby_human = False
-        self.update()
+            if self.topmost_filled == 3:
+                print("This column is already filled")
+                return
 
-    def clickedby_human(self):
 
-        if self.is_clicked:
-            print("Already Clicked")
-        else:
-            self.is_clickedby_human = True
-            self.is_clicked = True
-            self.setEnabled = False
+            self.topmost_filled = self.topmost_filled + 1
+            self.record_clicked[self.topmost_filled] = 0
+            turn.toggle_turn()
+            #self.setEnabled = False
             self.update()
 
     def is_clickedby_AI(self):
 
-        if is_clicked:
-            print("Already Clicked")
-        else:
+        if turn.val == 1:
 
-            self.is_clickedby_AI = True
-            self.is_clicked = True
-            self.setEnabled = False
+            if self.topmost_filled == 3:
+                print("This column is already filled")
+                return -1
+
+            self.topmost_filled = self.topmost_filled + 1
+            self.record_clicked[self.topmost_filled] = 1
+            turn.toggle_turn()
             self.update()
 
-    """
+
 
     def paintEvent(self, event):
 
@@ -68,16 +75,15 @@ class Box(QWidget):
 
         width = 90
         for i in range(4):
-            pane.drawRect(0, i * width, width, width)
-        """
 
-        if self.is_clickedby_human:
-            self.setStyleSheet("background-color: blue")
-        elif self.is_clickedby_AI:
-            self.setStyleSheet("background-color: red")
-        else:
-            self.setStyleSheet("background-color: black")
-        """
+            if self.record_clicked[i] == -1:
+                pane.setBrush(Qt.gray)
+            elif self.record_clicked[i] == 0:
+                pane.setBrush(Qt.green)
+            else:
+                pane.setBrush(Qt.black)
+
+            pane.drawRect(0, i * width, width, width)    
 
 
 
@@ -92,6 +98,7 @@ class Game(QMainWindow):
         #self.setCentralWidget(window)
 
         self.layout = QHBoxLayout()
+        self.layout.setSpacing(0)
         for r in range(4):
             box = Box()
             self.layout.addWidget(box)
@@ -99,7 +106,7 @@ class Game(QMainWindow):
 
         window.setLayout(self.layout)
         self.setCentralWidget(window)
-
+        self.resize(360, 360)
         self.show()
 
 
@@ -109,3 +116,6 @@ class Game(QMainWindow):
 app = QApplication(sys.argv)
 ex = Game()
 sys.exit(app.exec_())
+
+# turn = 0 means human's turn`
+# turn = 1 means AI's turn
