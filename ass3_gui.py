@@ -13,7 +13,7 @@ import sys
 import time
 import turn
 
-################ ERROR HERE ###########################
+################ FIND A WAY TO CALL AI ACTION AGENT ###########################
 
 
 class Box(QWidget):
@@ -63,6 +63,7 @@ class Box(QWidget):
 
             self.topmost_filled = self.topmost_filled + 1
             self.record_clicked[self.topmost_filled] = 1
+            print("AI DID ITS JOB")
             turn.toggle_turn()
             self.update()
 
@@ -83,7 +84,7 @@ class Box(QWidget):
             else:
                 pane.setBrush(Qt.black)
 
-            pane.drawRect(0, i * width, width, width)    
+            pane.drawRect(0, i * width, width, width)
 
 
 
@@ -107,7 +108,17 @@ class Game(QMainWindow):
         window.setLayout(self.layout)
         self.setCentralWidget(window)
         self.resize(360, 360)
+
         self.show()
+
+    def action_by_AI(self, number):
+
+        self.layout.itemAt(number).widget().is_clickedby_AI()
+
+    def test(self, num):
+        self.action_by_AI(num)
+
+
 
 
 
