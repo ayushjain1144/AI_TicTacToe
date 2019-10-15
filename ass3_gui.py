@@ -94,6 +94,11 @@ class Game(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        """
+        -1: not clicked
+        0: clicked by human
+        1: clicked by AI
+        """
         self.topmost_filled = [-1, -1, -1, -1]
         self.record_clicked = [[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]]
 
@@ -188,30 +193,96 @@ class Game(QMainWindow):
         number = 1
         self.is_clickedby_AI(number)
 
+    def is_horizontal_mapping(self):
+        """Returns -1 if no mapping, 0 if mapping for AI, 1 if mapping for AI"""
+
+        for i in range(4):
+            for j in range(2):
+                if min(record_clicked[i][j:j+3]) == max(record_clicked[i][j:j+3]) and record_clicked[i][j] != -1:
+                    return record_clicked[i][j]
+
+        return -1
+
+    def is_vertical_mapping(self):
+        """Returns -1 if no mapping, 0 if mapping for AI, 1 if mapping for AI"""
+
+        for i in range(2):
+            for j in range(4):
+                if min(list(record_clicked[i][j], record_clicked[i+1][j], record_clicked[i+2][j])) == max(min(list(record_clicked[i][j], record_clicked[i+1][j], record_clicked[i+2][j]))) and record_clicked[i][j] != -1:
+                    return record_clicked[i][j]
+
+        return -1
+
+    def is_diagonal_mapping(self):
+        """Returns -1 if no mapping, 0 if mapping for AI, 1 if mapping for AI"""
+
+        for i in range(2):
+            for j in range(4):
+                if record_clicked[i][j] != -1:
+                    if int(j / 2) < 0:
+                        if min(list(record_clicked[i][j], record_clicked[i+1][j+1], record_clicked[i+2][j+2])) == max(min(list(record_clicked[i][j], record_clicked[i+1][j+1], record_clicked[i+2][j+2]))):
+                            return record_clicked[i][j]
+                    else:
+                        if min(list(record_clicked[i][j], record_clicked[i+1][j-1], record_clicked[i+2][j-2])) == max(min(list(record_clicked[i][j], record_clicked[i+1][j-1], record_clicked[i+2][j-2]))):
+                            return record_clicked[i][j]
+        return -1
+
+
+
+    def utility_value_for_terminal(self):
+
+        if self.is_terminal_state():
+            val = max(list(self.is_diagonal_mapping(), self.is_horizontal_mapping(), self.is_vertical_mapping()))
+
+            # No Mapping: draw
+            if val == -1:
+                return 0
+            # Human Wins
+            elif val == 0:
+                return -1
+            # AI Wins
+            else:
+                return 1
+
+    def is_terminal_state(self):
+
+        # Either complete mapping or completely filled
+
+        val = max(list(self.is_diagonal_mapping(), self.is_horizontal_mapping(), self.is_vertical_mapping()))
+
+        if val != -1:
+            return True
+
+        else:
+            for i in range(4):
+                for j in range(4):
+                    if record_clicked[i][j] != -1:
+
+                        return False
+        return True
+
+
+    def minimax(state):
+        """Returns the action"""
+
+        return
+
+    def maxvalue(state):
+        """Returns a utility value"""
+
+        return
+
+    def minvalue(state):
+        """Returns a utility value"""
+
+        return
+
             #self.action_by_human()
 
-"""
 
 
-    def test(self, num):
-        self.turn_decider()
-
-    def turn_decider(self):
-
-        global lock
 
 
-        #human = threading.Thread(target=, args=(lock,))
-        ai = threading.Thread(target=self.action_by_AI, args=(lock,))
-        #human = threading.Thread(target=self.action_by_human, args=(lock,))
-
-        ai.start()
-        human.start()
-
-        ai.join()
-        human.join()
-
-"""
 
 
 app = QApplication(sys.argv)
