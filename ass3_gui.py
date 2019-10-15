@@ -18,7 +18,7 @@ val = 0
 lock = threading.Lock()
 ################ FIND A WAY TO CALL AI ACTION AGENT ###########################
 
-
+"""
 class Box(QWidget):
 
     is_clicked = pyqtSignal()
@@ -87,45 +87,110 @@ class Box(QWidget):
 
             pane.drawRect(0, i * width, width, width)
 
-
+"""
 
 class Game(QMainWindow):
 
     def __init__(self):
         super().__init__()
 
+        self.topmost_filled = [-1, -1, -1, -1]
+        self.record_clicked = [[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]]
+
+        self.color_list = ["grey", "green", "red"]
+        self.mouseReleaseEvent = self.clickedby_human
+
         self.setWindowTitle(f"AI Game")
-        window = QWidget()
+        self.window = QWidget()
         #layout = QHBoxLayout()
         #self.setCentralWidget(window)
 
-        self.layout = QHBoxLayout()
-        self.layout.setSpacing(0)
+        #self.layout = QHBoxLayout()
+        #self.layout.setSpacing(0)
+        """
         for r in range(4):
-            box = Box()
+            box = make_box()
             self.layout.addWidget(box)
+        """
 
-
-        window.setLayout(self.layout)
-        self.setCentralWidget(window)
+        #window.setLayout(self.layout)
+        self.setCentralWidget(self.window)
         self.resize(360, 360)
 
+        self.update()
         self.show()
-        self.turn_decider()
+        #self.turn_decider()
 
-    def action_by_AI(self, lock):
+    def determine_clicked_column(self, event):
 
-        while(True):
-            number = 1
-            lock.acquire()
-            self.layout.itemAt(number).widget().is_clickedby_AI()
-            lock.release()
-            time.sleep(1)
+        x = int(event.pos().x() / 90)
+        return x
+
+    def clickedby_human(self, event):
+
+        col = self.determine_clicked_column(event)
+
+        if self.topmost_filled[col] == 3:
+            print("This column is already filled")
+            return
+
+
+        self.topmost_filled[col] = self.topmost_filled[col] + 1
+        self.record_clicked[col][self.topmost_filled[col]] = 0
+        #turn.toggle_turn()
+        #self.setEnabled = False
+        self.update()
+
+        ######Check for goal here################
+        self.action_by_AI()
+
+
+
+    def is_clickedby_AI(self, col):
+
+        #col = self.determine_clicked_column(event)
+
+        if self.topmost_filled[col] == 3:
+            print("This column is already filled")
+            return -1
+
+        self.topmost_filled[col] = self.topmost_filled[col] + 1
+        self.record_clicked[col][self.topmost_filled[col]] = 1
+        print("AI DID ITS JOB")
+        #turn.toggle_turn()
+        self.update()
+
+
+
+    def paintEvent(self, event):
+
+        print("bfrb")
+        pane = QPainter(self)
+        pane.setRenderHint(QPainter.Antialiasing)
+
+        width = 90
+        for j in range(4):
+            for i in range(4):
+
+                if self.record_clicked[i][j] == -1:
+                    pane.setBrush(Qt.gray)
+                elif self.record_clicked[i][j] == 0:
+                    pane.setBrush(Qt.green)
+                else:
+                    pane.setBrush(Qt.red)
+
+                pane.drawRect(i * width, j * width, width, width)
+
+
+    def action_by_AI(self):
+
+        # call minimax algorithm for calculating number
+        number = 1
+        self.is_clickedby_AI(number)
+
             #self.action_by_human()
 
-    def action_by_human(self, lock):
-
-        lock.acquire()
+"""
 
 
     def test(self, num):
@@ -138,7 +203,7 @@ class Game(QMainWindow):
 
         #human = threading.Thread(target=, args=(lock,))
         ai = threading.Thread(target=self.action_by_AI, args=(lock,))
-        human = threading.Thread(target=self.action_by_human, args=(lock,))
+        #human = threading.Thread(target=self.action_by_human, args=(lock,))
 
         ai.start()
         human.start()
@@ -146,7 +211,7 @@ class Game(QMainWindow):
         ai.join()
         human.join()
 
-
+"""
 
 
 app = QApplication(sys.argv)
