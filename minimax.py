@@ -2,15 +2,15 @@
 
 def minimax(state):
     """Returns the action"""
-
+    
     return
 
-def max-value(state):
+def maxvalue(state):
     """Returns a utility value"""
 
     return
 
-def min-value(state):
+def minvalue(state):
     """Returns a utility value"""
 
-    return            
+    return
