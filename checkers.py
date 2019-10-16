@@ -12,7 +12,6 @@ from copy import deepcopy
 import random
 import sys
 import time
-import turn
 import threading
 from functools import partial
 
@@ -116,7 +115,7 @@ class Game(QMainWindow):
 
     def paintEvent(self, event):
 
-        print("bfrb")
+
         pane = QPainter(self)
         pane.setRenderHint(QPainter.Antialiasing)
 
@@ -132,6 +131,16 @@ class Game(QMainWindow):
                     pane.setBrush(Qt.red)
 
                 pane.drawRect(i * width, j * width, width, width)
+
+        pen = QPen(Qt.blue, 6, Qt.SolidLine)
+        pane.setPen(pen)
+
+        x1 = 0
+        for i in self.topmost_filled:
+
+            y1 = i + 1
+            pane.drawLine(x1, y1 * 90, x1 + 90, y1 * 90)
+            x1 = x1 + 90
 
 
     def action_by_AI(self):
@@ -305,7 +314,7 @@ class Game(QMainWindow):
         new_topmost_filled_state[a] = new_topmost_filled_state[a] + 1
         new_state[new_topmost_filled_state[a]][a] = val
 
-        
+
         return (new_state, new_topmost_filled_state)
 
 
