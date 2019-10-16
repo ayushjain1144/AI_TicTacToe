@@ -37,8 +37,28 @@ def is_diagonal_mapping(state):
     return -1
 
 
-state = [[-1, -1, -1, -1], [-1, -1, -1, 1], [-1, -1, 1, 1], [-1, -1, 1, -1]]
+def is_terminal_state(state):
 
+    # Either complete mapping or completely filled
+
+    record_clicked = state
+    val = max(list((is_diagonal_mapping(state), is_horizontal_mapping(state), is_vertical_mapping(state))))
+
+    print(val)
+    if val != -1:
+        return True
+
+    else:
+        for i in range(4):
+            for j in range(4):
+                if record_clicked[i][j] == -1:
+
+                    return False
+    return True
+
+
+state = [[1, 0, 1, 0], [0, 1, 0, 1], [0, 1, 0, 1], [1, 0, 1, 0]]
+print(is_terminal_state(state))
 
 
 def valid_moves(topmost_filled_state):

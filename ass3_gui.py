@@ -58,6 +58,10 @@ class Game(QMainWindow):
         self.show()
         #self.turn_decider()
 
+    def end_game(self):
+
+        self.setEnabled(False)
+
     def determine_clicked_column(self, event):
 
         x = int(event.pos().x() / 90)
@@ -80,11 +84,17 @@ class Game(QMainWindow):
 
         if self.is_terminal_state(self.record_clicked):
             print("Human Won")
-            sys.exit()
+            self.setWindowTitle("HUMAN WON !!!!")
+            self.end_game()
+            return
+            #sys.exit()
         self.action_by_AI()
+
         if self.is_terminal_state(self.record_clicked):
             print("AI Won")
-            sys.exit()
+            self.setWindowTitle("AI WON !!!!")
+            self.end_game()
+            #sys.exit()
 
 
 
@@ -133,7 +143,7 @@ class Game(QMainWindow):
         if is_ab == 0:
             number = self.minimax(state, topmost_filled_state)
         else:
-            print("Here")
+            #print("Here")
             number = self.minimax_ab(state, topmost_filled_state)
             if number == 0:
                 print(topmost_filled_state)
@@ -211,7 +221,7 @@ class Game(QMainWindow):
         else:
             for i in range(4):
                 for j in range(4):
-                    if record_clicked[i][j] != -1:
+                    if record_clicked[i][j] == -1:
 
                         return False
         return True
@@ -234,14 +244,14 @@ class Game(QMainWindow):
         #print("Here1")
 
         if win == -1:
-            while(topmost_filled_state[number] == 3):
+            while(topmost_filled_state[number] == 3 and number < 3):
                 #print("caught")
                 number = number + 1
 
         #print("Here2")
 
-        if number == 0:
-            print(win, topmost_filled_state)
+        #if number == 0:
+            #print(win, topmost_filled_state)
 
         return number
 
@@ -274,7 +284,7 @@ class Game(QMainWindow):
         """Returns a utility value"""
         self.count_recursive = self.count_recursive + 1
         if self.is_terminal_state(state):
-            return -self.utility_value_for_terminal(state)
+            return self.utility_value_for_terminal(state)
         v = 1
         for a in self.valid_moves(topmost_filled_state):
             new_state, new_topmost_filled_state = self.nextState(state, topmost_filled_state, a, 0)
@@ -310,7 +320,7 @@ class Game(QMainWindow):
         win = -1
         number = 0
 
-        beta = inf
+        beta = 1
 
         for a in self.valid_moves(topmost_filled_state):
             new_state, new_topmost_filled_state = self.nextState(state, topmost_filled_state, a, 1)
@@ -320,7 +330,7 @@ class Game(QMainWindow):
                 number = a
 
         if win == -1:
-            while(topmost_filled_state[number] == 3):
+            while(topmost_filled_state[number] == 3 and number < 3):
                 #print("caught")
                 number = number + 1
 
@@ -330,7 +340,7 @@ class Game(QMainWindow):
         """Returns a utility value"""
         self.count_recursive = self.count_recursive + 1
         if self.is_terminal_state(state):
-            return -self.utility_value_for_terminal(state)
+            return self.utility_value_for_terminal(state)
         v = 1
         for a in self.valid_moves(topmost_filled_state):
             new_state, new_topmost_filled_state = self.nextState(state, topmost_filled_state, a, 0)
