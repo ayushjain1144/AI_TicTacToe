@@ -1,3 +1,4 @@
+
 def is_horizontal_mapping(state):
     """Returns -1 if no mapping, 0 if mapping for human, 1 if mapping for AI"""
 
@@ -37,4 +38,20 @@ def is_diagonal_mapping(state):
 
 
 state = [[-1, -1, -1, -1], [-1, -1, -1, 1], [-1, -1, 1, 1], [-1, -1, 1, -1]]
-print(is_vertical_mapping(state))
+
+
+
+def valid_moves(topmost_filled_state):
+
+    list = []
+
+    counter = 0
+    for i in topmost_filled_state:
+        if i != 3:
+            list.append(counter)
+        counter = counter + 1
+    return list
+
+topmost_filled = [3, 2, 2, 1]
+
+print(valid_moves(topmost_filled))

@@ -22,78 +22,7 @@ inf = float('inf')
 
 is_ai = 0
 is_ab = 0
-################ FIND A WAY TO CALL AI ACTION AGENT ###########################
 
-"""
-class Box(QWidget):
-
-    is_clicked = pyqtSignal()
-    is_clickedby_human = pyqtSignal()
-    is_clickedby_AI = pyqtSignal()
-
-    # -1 for not clickedby_human
-    # 0 for clicked by human
-    # 1 for clicked by AI
-
-    global lock
-
-    def __init__(self):
-
-        super().__init__()
-
-        self.topmost_filled = -1
-        self.record_clicked = [-1, -1, -1, -1]
-        self.color_list = ["grey", "green", "red"]
-        self.mouseReleaseEvent = self.clickedby_human
-
-    def clickedby_human(self, event):
-
-
-        if self.topmost_filled == 3:
-            print("This column is already filled")
-            return
-
-
-        self.topmost_filled = self.topmost_filled + 1
-        self.record_clicked[self.topmost_filled] = 0
-        #turn.toggle_turn()
-        #self.setEnabled = False
-        self.update()
-        lock.release()
-
-
-    def is_clickedby_AI(self):
-
-        if self.topmost_filled == 3:
-            print("This column is already filled")
-            return -1
-
-        self.topmost_filled = self.topmost_filled + 1
-        self.record_clicked[self.topmost_filled] = 1
-        print("AI DID ITS JOB")
-        #turn.toggle_turn()
-        self.update()
-
-
-
-    def paintEvent(self, event):
-
-        pane = QPainter(self)
-        pane.setRenderHint(QPainter.Antialiasing)
-
-        width = 90
-        for i in range(4):
-
-            if self.record_clicked[i] == -1:
-                pane.setBrush(Qt.gray)
-            elif self.record_clicked[i] == 0:
-                pane.setBrush(Qt.green)
-            else:
-                pane.setBrush(Qt.red)
-
-            pane.drawRect(0, i * width, width, width)
-
-"""
 
 class Game(QMainWindow):
 
@@ -114,16 +43,7 @@ class Game(QMainWindow):
         self.setWindowTitle(f"AI Game")
         self.window = QWidget()
 
-        #layout = QHBoxLayout()
-        #self.setCentralWidget(window)
 
-        #self.layout = QHBoxLayout()
-        #self.layout.setSpacing(0)
-        """
-        for r in range(4):
-            box = make_box()
-            self.layout.addWidget(box)
-        """
 
         #window.setLayout(self.layout)
         self.count_recursive = 0
@@ -131,6 +51,10 @@ class Game(QMainWindow):
         self.resize(360, 360)
         self.center()
         self.update()
+
+        if is_ai == 1:
+            self.action_by_AI()
+
         self.show()
         #self.turn_decider()
 
@@ -169,7 +93,7 @@ class Game(QMainWindow):
         #col = self.determine_clicked_column(event)
 
         if self.topmost_filled[col] == 3:
-            print("This column is already filled")
+            print(f"This column {col} is already filled")
             return -1
 
         self.topmost_filled[col] = self.topmost_filled[col] + 1
@@ -205,7 +129,14 @@ class Game(QMainWindow):
         # call minimax algorithm for calculating number
         state = deepcopy(self.record_clicked)
         topmost_filled_state = deepcopy(self.topmost_filled)
-        number = self.minimax(state, topmost_filled_state)
+
+        if is_ab == 0:
+            number = self.minimax(state, topmost_filled_state)
+        else:
+            print("Here")
+            number = self.minimax_ab(state, topmost_filled_state)
+            if number == 0:
+                print(topmost_filled_state)
         #print(f"Count Recursion: {self.count_recursive}")
         self.is_clickedby_AI(number)
         #print(self.topmost_filled)
@@ -292,12 +223,25 @@ class Game(QMainWindow):
 
         win = -1
         number = 0
+
+        #print("Here0")
         for a in self.valid_moves(topmost_filled_state):
             new_state, new_topmost_filled_state = self.nextState(state, topmost_filled_state, a, 1)
             v = self.minvalue(new_state, new_topmost_filled_state)
             if v > win:
                 win = v
                 number = a
+        #print("Here1")
+
+        if win == -1:
+            while(topmost_filled_state[number] == 3):
+                #print("caught")
+                number = number + 1
+
+        #print("Here2")
+
+        if number == 0:
+            print(win, topmost_filled_state)
 
         return number
 
@@ -374,6 +318,11 @@ class Game(QMainWindow):
             if  v > win:
                 win = v
                 number = a
+
+        if win == -1:
+            while(topmost_filled_state[number] == 3):
+                #print("caught")
+                number = number + 1
 
         return number
 
