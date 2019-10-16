@@ -305,8 +305,7 @@ class Game(QMainWindow):
         new_topmost_filled_state[a] = new_topmost_filled_state[a] + 1
         new_state[new_topmost_filled_state[a]][a] = val
 
-        #print(f"inside nextState: {new_state}")
-        #print(f"inside nextState topmost_filled: {new_topmost_filled_state}")
+        
         return (new_state, new_topmost_filled_state)
 
 
