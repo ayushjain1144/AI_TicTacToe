@@ -14,11 +14,14 @@ import sys
 import time
 import turn
 import threading
+from functools import partial
 
 val = 0
 lock = threading.Lock()
 inf = float('inf')
 
+is_ai = 0
+is_ab = 0
 ################ FIND A WAY TO CALL AI ACTION AGENT ###########################
 
 """
@@ -110,6 +113,7 @@ class Game(QMainWindow):
 
         self.setWindowTitle(f"AI Game")
         self.window = QWidget()
+
         #layout = QHBoxLayout()
         #self.setCentralWidget(window)
 
@@ -125,7 +129,7 @@ class Game(QMainWindow):
         self.count_recursive = 0
         self.setCentralWidget(self.window)
         self.resize(360, 360)
-
+        self.center()
         self.update()
         self.show()
         #self.turn_decider()
@@ -404,6 +408,13 @@ class Game(QMainWindow):
         #print(f"maxvalue: {v}")
         return v
 
+    def center(self):
+
+        qr = self.frameGeometry()
+        cp  = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
 
 class FirstWidget(QMainWindow):
 
@@ -420,11 +431,12 @@ class FirstWidget(QMainWindow):
         self.normal_button = QPushButton()
         self.normal_button.setFixedSize(QSize(100, 100))
         self.normal_button.setText("Without a/b")
-        self.normal_button.pressed.connect(self.open_game)
+        self.normal_button.pressed.connect(partial(self.open_game, 0))
+
         self.ab_button = QPushButton()
         self.ab_button.setFixedSize(QSize(100, 100))
         self.ab_button.setText("With a/b")
-
+        self.ab_button.pressed.connect(partial(self.open_game, 1))
         self.label = QLabel()
         self.label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
@@ -445,14 +457,83 @@ class FirstWidget(QMainWindow):
         window.setLayout(vert_layout)
         self.setCentralWidget(window)
         self.resize(360, 360)
+        self.center()
         self.show()
 
-    def open_game(self):
+    def open_game(self, val):
 
+        global is_ab
+        is_ab = val
+        self.win = SecondWidget()
+        self.win.show()
+        self.close()
+
+    def center(self):
+
+        qr = self.frameGeometry()
+        cp  = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+
+class SecondWidget(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+
+
+        self.setWindowTitle(f"AI Game")
+        window = QWidget()
+
+
+
+
+        self.normal_button = QPushButton()
+        self.normal_button.setFixedSize(QSize(100, 100))
+        self.normal_button.setText("Human")
+        self.normal_button.pressed.connect(partial(self.open_game, 0))
+
+        self.ab_button = QPushButton()
+        self.ab_button.setFixedSize(QSize(100, 100))
+        self.ab_button.setText("AI")
+        self.ab_button.pressed.connect(partial(self.open_game, 1))
+        self.label = QLabel()
+        self.label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+
+        self.label.setText("Choose First Turn")
+        font = self.label.font()
+        font.setPointSize(20)
+        font.setWeight(65)
+        self.label.setFont(font)
+
+        layout =QHBoxLayout()
+        layout.addWidget(self.normal_button)
+        layout.addWidget(self.ab_button)
+
+        vert_layout = QVBoxLayout()
+        vert_layout.addWidget(self.label)
+        vert_layout.addLayout(layout)
+
+        window.setLayout(vert_layout)
+        self.setCentralWidget(window)
+        self.resize(360, 360)
+        self.center()
+        self.show()
+
+    def open_game(self, val):
+
+        global is_ai
+        is_ai = val
         self.win = Game()
         self.win.show()
         self.close()
 
+    def center(self):
+
+        qr = self.frameGeometry()
+        cp  = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
 
 
