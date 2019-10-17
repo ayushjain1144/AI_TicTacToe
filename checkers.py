@@ -60,6 +60,7 @@ class Game(QMainWindow):
     def end_game(self):
 
         self.setEnabled(False)
+        print(self.count_recursive)
         self.win = ThirdWidget()
         self.win.show()
         self.close()
@@ -254,6 +255,7 @@ class Game(QMainWindow):
         for a in self.valid_moves(topmost_filled_state):
             new_state, new_topmost_filled_state = self.nextState(state, topmost_filled_state, a, 1)
             v = self.minvalue(new_state, new_topmost_filled_state)
+            #print(self.count_recursive)
             if v > win:
                 win = v
                 number = a
@@ -287,6 +289,7 @@ class Game(QMainWindow):
 
         self.count_recursive = self.count_recursive + 1
         if self.is_terminal_state(state):
+            #print(self.count_recursive)
             return self.utility_value_for_terminal(state)
         v = -1
         for a in self.valid_moves(topmost_filled_state):
@@ -300,6 +303,7 @@ class Game(QMainWindow):
         """Returns a utility value"""
         self.count_recursive = self.count_recursive + 1
         if self.is_terminal_state(state):
+            #print(self.count_recursive)
             return self.utility_value_for_terminal(state)
         v = 1
         for a in self.valid_moves(topmost_filled_state):
@@ -340,6 +344,7 @@ class Game(QMainWindow):
         for a in self.valid_moves(topmost_filled_state):
             new_state, new_topmost_filled_state = self.nextState(state, topmost_filled_state, a, 1)
             v = self.minvalue_ab(new_state, new_topmost_filled_state, win, beta)
+
             if  v > win:
                 win = v
                 number = a
@@ -355,6 +360,7 @@ class Game(QMainWindow):
         """Returns a utility value"""
         self.count_recursive = self.count_recursive + 1
         if self.is_terminal_state(state):
+            #print(self.count_recursive)
             return self.utility_value_for_terminal(state)
         v = 1
         for a in self.valid_moves(topmost_filled_state):
@@ -371,6 +377,7 @@ class Game(QMainWindow):
 
         self.count_recursive = self.count_recursive + 1
         if self.is_terminal_state(state):
+            #print(self.count_recursive)
             return self.utility_value_for_terminal(state)
         v = -1
         for a in self.valid_moves(topmost_filled_state):
@@ -534,6 +541,8 @@ class ThirdWidget(QMainWindow):
         self.label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.label1 = QLabel()
         self.label1.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.label2 = QLabel()
+        self.label2.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
         global is_ai_win
 
@@ -552,6 +561,18 @@ class ThirdWidget(QMainWindow):
         font.setWeight(65)
         self.label.setFont(font)
 
+        self.label2.setText("See Statistics")
+        font = self.label2.font()
+        font.setPointSize(20)
+        font.setWeight(65)
+        self.label2.setFont(font)
+
+        self.normal_button1= QPushButton()
+        self.normal_button1.setFixedSize(QSize(100, 100))
+        self.normal_button1.setText("Yes")
+        self.normal_button1.pressed.connect(self.statistics)
+
+
         layout =QHBoxLayout()
         layout.addWidget(self.normal_button)
         layout.addWidget(self.ab_button)
@@ -560,6 +581,8 @@ class ThirdWidget(QMainWindow):
         vert_layout.addWidget(self.label1)
         vert_layout.addWidget(self.label)
         vert_layout.addLayout(layout)
+        vert_layout.addWidget(self.label2, alignment = Qt.AlignHCenter | Qt.AlignVCenter)
+        vert_layout.addWidget(self.normal_button1, alignment = Qt.AlignHCenter | Qt.AlignVCenter)
 
         window.setLayout(vert_layout)
         self.setCentralWidget(window)
@@ -576,6 +599,12 @@ class ThirdWidget(QMainWindow):
             self.win.show()
             self.close()
 
+    def statistics(self):
+
+    	self.win = FourthWidget()
+    	self.win.show()
+    	self.close()        
+
 
     def center(self):
 
@@ -583,6 +612,112 @@ class ThirdWidget(QMainWindow):
         cp  = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+
+class FourthWidget(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+
+
+        self.setWindowTitle(f"STATISTICS")
+        window = QWidget()
+
+        layout = QHBoxLayout()
+
+        left = QVBoxLayout()
+        right = QVBoxLayout()
+
+        lb1_R1 = QLabel(self)
+        lb1_R2 = QLabel(self)
+        lb1_R3 = QLabel(self)
+        lb1_R4 = QLabel(self)
+        lb1_R5 = QLabel(self)
+        lb1_R6 = QLabel(self)
+        lb1_R7 = QLabel(self)
+        lb1_R8 = QLabel(self)
+        lb1_R9 = QLabel(self)
+        lb1_R10 = QLabel(self)
+        lb1_R11 = QLabel(self)
+        lb1_R12 = QLabel(self)
+        
+
+        lb1_R1.setText(f"R1: 1923047")
+        lb1_R2.setText(f"R2: 64")
+        lb1_R3.setText(f"R3: 10")
+        lb1_R4.setText(f"R4: 3.54 min")
+        lb1_R5.setText(f"R5: 0.009 nodes / micro sec")
+        lb1_R6.setText(f"R6: 9509")
+        lb1_R7.setText(f"R7: 0.995")
+        lb1_R8.setText(f"R8: 15 sec")
+        lb1_R9.setText(f"R9: 121 KB")
+        lb1_R10.setText(f"R10: 274s")
+        lb1_R11.setText(f"R11 10/0 (Depends on who plays first)")
+        lb1_R12.setText(f"R12: 20/0(Depends on who plays first)")
+        
+
+
+        lb1_R1.setAlignment(Qt.AlignLeft)
+        lb1_R2.setAlignment(Qt.AlignLeft)
+        lb1_R3.setAlignment(Qt.AlignLeft)
+        lb1_R4.setAlignment(Qt.AlignLeft)
+        lb1_R5.setAlignment(Qt.AlignLeft)
+        lb1_R6.setAlignment(Qt.AlignLeft)
+        lb1_R7.setAlignment(Qt.AlignLeft)
+        lb1_R8.setAlignment(Qt.AlignLeft)
+        lb1_R9.setAlignment(Qt.AlignLeft)
+        lb1_R10.setAlignment(Qt.AlignLeft)
+        lb1_R11.setAlignment(Qt.AlignLeft)
+        lb1_R12.setAlignment(Qt.AlignLeft)
+        
+
+
+        left.addWidget(lb1_R1)
+
+
+        left.addWidget(lb1_R2)
+        left.addWidget(lb1_R3)
+        left.addWidget(lb1_R4)
+        left.addWidget(lb1_R5)
+        left.addWidget(lb1_R6)
+        left.addWidget(lb1_R7)
+
+        right.addWidget(lb1_R8)
+        right.addWidget(lb1_R9)
+        right.addWidget(lb1_R10)
+        right.addWidget(lb1_R11)
+        right.addWidget(lb1_R12)
+
+        self.normal_button = QPushButton()
+        self.normal_button.setFixedSize(QSize(100, 100))
+        self.normal_button.setText("Continue")
+        self.normal_button.pressed.connect(self.open_game)
+
+        right.addWidget(self.normal_button)
+
+        layout.addLayout(left)
+        layout.addLayout(right)
+
+        window.setLayout(layout)
+        self.setCentralWidget(window)
+        self.resize(360, 360)
+        self.center()
+        self.show()
+        
+
+    def open_game(self):
+
+        self.win = ThirdWidget()
+        self.win.show()
+        self.close()
+
+
+    def center(self):
+
+        qr = self.frameGeometry()
+        cp  = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())    
 
 
 """
